@@ -1,58 +1,101 @@
-
 import * as math from 'mathjs'
-window.onload=function() {
-  canv=document.getElementById("bb");
-  ctx=canv.getContext("2d");
-  document.addEventListener("mousemove",PlatformControl, False);
-  document.addEventListener("keydown",keyPush);
-  document.addEventListener("click", launchBall);
-  setInterval(game, 1000/60);
-}
-var blox = math.ones(3, 15);
+var canv=document.getElementById("bb");
+var ctx=canv.getContext("2d");
+document.addEventListener("click", launchBall);
+document.addEventListener("mousemove", mouseMoveHandler, false);
+
 // changes to 0 when destroyed
 //This has indiv block size 25px * 50px
-vbx=vby=0;
+var ballradius = 5;
+dx = 0; //ball differential y
+dy = 0; //ball differential x
 px=canv.width/2; //initial
-py=49; //doesnt change
-function game() {
-  if(px<0) {
-    px=canv.width;
-  }
-  if (px>canv.width) {
-    px=0;
-  }
-  ctx.fillStyle="#ff0000";
-  ctx.fillRect(0, 0, canv.width, canv.height);
+py=canv.height-50; //doesnt change
+pw = 50; //platform width
+ph = 10; //'' height
+bx = px+25;// ball x
+by = py+1; // ball y
+blox = math.ones(3, 15); //matrix of bricks
 
 
-  var x = canvas.width/2;
-  var y = canvas.height-30;
-  var dx = 1;
-  var dy = 1;
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function launchBall(event){
+  if (dx == 0 && dy == 0){
+
+  }
+}
+
+
+function mouseMoveHandler(event) {
+  var rect = canv.getBoundingClientRect();
+  var x = event.clientX-rect.left;
+  var y = event.clientY-rect.top;
+  if (dx || dy){
+    if(px-(pw/2)<=0) {
+      px=canv.width-50;
+    }
+    if (px+(pw/2)>canv.width) {
+      px=pw/2;
+    }
+    px = x;
+  } else {
     ctx.beginPath();
-    ctx.arc(x, y, 7, 0, Math.PI * 2);
-    ctx.fillStyle = "#0095DD"
-    ctx.fill()
-    ctx.closePath();
-    y += dy
-    x += dx
+    ctx.strokeStyle = "orange";
+    ctx.moveTo(px, py-1);
+    ctx.lineTo()
+
+    }
+
+  }
+
+
+
+  function drawBlox() {
     ctx.fillStyle = 'hsl(' + 360 * Math.random() + ', 50%, 50%)';
-    var pbloxx = 0;
-    var pbloxy = 0;
-    for(var i=0; i<=14; i++){
-      for(var j=0; j<=2; j++){
-        ctx.fillRect(pbloxx, pbloxy, 50, 25);
-        pbloxy += 30;
-        }
-      pbloxx += 50;
+    blox.forEach(function (value, index, matrix){
+      if (blox.get(index) == 1) {
+        ctx.fillRect(index[1]*50, index[0]*25, 50, 25);
+      }
     }
   }
-  setInterval(draw, 10);
+
+  function drawPlatform(){
+    ctx.beginPath();
+    ctx.fillStyle = "#0000000"
+    ctx.strokeStyle = "yellow";
+    ctx.rect(px-(pw/2), py, pw, ph);
+    ctx.stroke();
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  function drawBall(){
+    ctx.beginPath();
+    ctx.arc(bx, by, ballradius, 0, Math.PI * 2);
+    ctx.fillStyle = "#0095DD";
+    ctx.strokeStyle = "red";
+    ctx.stroke();
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  function collision(){
+    forEach
+  }
+
+
+
+  function  draw(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBlox();
+    drawBall();
+    drawPlatform();
 
 
 
 
 
-}
+
+    requestAnimationFrame(draw);{
+
+    }
+  }

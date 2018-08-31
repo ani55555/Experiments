@@ -1,2 +1,119 @@
+
 <canvas id="bb" width="750" height="750"></canvas>
+<head>
+<script src="math.js" type="text/javascript"></script>
+</head>
+
 <script>
+canv=document.getElementById("bb");
+ctx=canv.getContext("2d");
+document.addEventListener("mousemove", mouseMoveHandler, false);
+document.addEventListener("click", launchBall, false);
+
+px = 0;
+py = canv.height-25;
+pw = 75;
+ph = 10;
+dx=dy=0;
+ballradius = 6;
+matrix = [];
+for(var y=0; y<=3; y++){
+  matrix[y] = []
+  for (var z=0; z<=14; z++){
+    matrix[y][z] = 1;
+  }
+}
+
+
+function mouseMoveHandler(event) {
+  var rect = canv.getBoundingClientRect();
+  var x = event.clientX-rect.left;
+  var y = event.clientY-rect.top;
+  px = x;
+  //py = y; future experimentation
+}
+
+function drawblock(){
+  ctx.beginPath();
+  ctx.rect(px-(pw/2), py, pw, ph)
+  ctx.fillStyle = "blue"
+  ctx.strokeStyle = "black";
+  ctx.stroke();
+  ctx.fill();
+  ctx.closePath();
+}
+
+function drawbricks() {
+  for (var i=0; i<=14; i++){
+    for(var j=0; j<=3; j++){
+      ctx.fillStyle = 'hsl(' + 360 * Math.random() + ', 100%, 45%)';
+      if(matrix[j][i]) {
+        ctx.fillRect(i*50, j*15, 50, 15);
+    } else if((matrix[j][i]) == 0){
+        ctx.fillStyle = "black";
+        ctx.fillRect(i*50, j*15, 50, 15);
+      }
+    }
+  }
+}
+
+function launchBall(event) {
+  //dx = 0;
+  bx = px;
+  by = py-7;
+  dy = Math.random() * Math.floor(-10);
+  dx = Math.random() * Math.floor(5);
+  dx *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+}
+
+
+
+function drawBall(){
+  ctx.beginPath();
+  if(dx == 0 && dy == 0) {
+    ctx.arc(px, py-7, ballradius, 0, Math.PI * 2);
+    ctx.fillStyle = "red";
+    ctx.fill();
+    ctx.closePath();
+  } else {
+    if(bx+6 >= 750 || bx-6<=0){
+      dx = -1 * dx;
+    }
+    else if(by+6 >= 750){
+      //alert("ya fookin lost");
+      //return 0;
+      dy = -1 * dy;
+    }
+    else if(by-6 <= 60){
+      var tempx = Math.floor(bx/50);
+      var tempy = Math.floor((by-6)/15);
+      if(matrix[tempy][tempx] == 1){
+        matrix[tempy][tempx] = 0;
+        dy = -1 * dy;
+      }
+    }
+    else if(by+6>=py && bx+6<=px+37.5 && bx-6>=px-37.5){
+      dy = -1 * dy;
+    }
+    bx += dx;
+    by += dy;
+    ctx.arc(bx, by, ballradius, 0, Math.PI * 2);
+    ctx.fillStyle = "red";
+    ctx.fill();
+    ctx.closePath();
+  }
+}
+
+
+
+function draw() {
+  ctx.clearRect(0, 0, canv.width, canv.height);
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canv.width, canv.height);
+  drawblock();
+  drawbricks();
+  drawBall();
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
